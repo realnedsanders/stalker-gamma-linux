@@ -22,8 +22,14 @@ _ICON_RESOURCE = "assets/icon.png"
 
 
 def launch_command(target: Path) -> list[str]:
-    """Commande de lancement du jeu, en chemin absolu (indépendant du `$PATH`)."""
+    """The game's launch command, as an absolute path (independent of `$PATH`)."""
     console_script = Path(sys.executable).parent / "stalker-gamma-linux"
+    if not system.path_exists(console_script):
+        # Nix (and `pip --user`) install the script away from the interpreter.
+        # shortcut: under Nix this is a store path, dead once its generation is
+        # garbage-collected; re-run `shortcut` after an upgrade.
+        found = system.which("stalker-gamma-linux")
+        console_script = Path(found) if found is not None else console_script
     return [str(console_script), "play", "--target", str(target)]
 
 

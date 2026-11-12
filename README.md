@@ -73,6 +73,13 @@ install target, download/install, then Play. Already have a checkout?
 `./install.sh` does the same without cloning; `--no-launch` sets everything up
 without opening the window.
 
+On **Nix** (x86_64-linux), from a checkout: `nix run . -- doctor` for the CLI,
+`nix shell . -c stalker-gamma-linux-gui` for the GUI. The package carries
+`umu-run`, `7zz` and libunrar (unfree: the flake allows that one package only).
+`nix develop` gives the tools of `.devbox/check`. The `shortcut` and
+`steam-shortcut` entries point into the Nix store: run them again after an
+upgrade, before garbage-collecting the old generation.
+
 ModDB (where GAMMA's mods are hosted) occasionally blocks a download — a
 Cloudflare captcha, a dead link, a corrupted archive. Rather than a raw
 traceback, a failed install now names the mod and the reason (network/ModDB

@@ -12,6 +12,7 @@ build/
 .ruff_cache/
 .pytest_cache/
 .coverage
+/result
 
 # Local test installs (never commit game/mod data)
 /testenv/

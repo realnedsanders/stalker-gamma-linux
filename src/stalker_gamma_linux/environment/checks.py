@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -343,12 +344,21 @@ def _libunrar_version(family: DistroFamily) -> tuple[int, ...] | None:
 
 
 def check_libunrar(family: DistroFamily) -> Requirement:
-    """Présence *et* version de libunrar : une 6.1.6 est aussi dangereuse qu'une absence.
+    """Presence *and* version of libunrar: a 6.1.6 is as dangerous as no library at all.
 
-    Vérifier la seule présence rapportait « [ OK ] » sur une machine exposée à
-    CVE-2022-30333 alors que le pipeline extrait des archives tierces avec cette
-    bibliothèque (cf. MIN_LIBUNRAR_VERSION).
+    Checking presence alone reported "[ OK ]" on a machine exposed to
+    CVE-2022-30333, while the pipeline extracts third-party archives with this
+    library (see MIN_LIBUNRAR_VERSION).
     """
+    # python-unrar loads this path before searching the ldconfig cache, which
+    # never lists a Nix store path. A library picked by hand, not by the package
+    # manager: there is no package to ask its version.
+    override = os.environ.get("UNRAR_LIB_PATH")
+    if override and system.path_exists(Path(override)):
+        return Requirement(
+            name="libunrar", status=Status.OK, detail=_("detected (version unreadable)")
+        )
+
     result = system.run(["ldconfig", "-p"])
     if "libunrar" not in result.stdout:
         return Requirement(

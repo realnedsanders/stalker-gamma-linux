@@ -10,6 +10,7 @@ from stalker_gamma_linux.environment import system
 
 def test_launch_command_uses_absolute_console_script(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(install.sys, "executable", "/opt/venv/bin/python")
+    monkeypatch.setattr(system, "which", lambda command: None)
 
     command = install.launch_command(Path("/games/gamma"))
 
